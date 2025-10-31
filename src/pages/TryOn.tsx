@@ -2,10 +2,11 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Camera, FlipHorizontal, Settings, ArrowLeft, Share2, Heart, ShoppingCart } from "lucide-react";
+import { Camera, FlipHorizontal, Settings, ArrowLeft, Share2, Heart, ShoppingCart, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import glasses1 from "@/assets/glasses-1.png";
+import { motion, AnimatePresence } from "framer-motion";
 
 const TryOn = () => {
   const { id } = useParams();
@@ -18,7 +19,6 @@ const TryOn = () => {
   const [transparency, setTransparency] = useState([100]);
   const [cameraActive, setCameraActive] = useState(false);
 
-  // Mock product data
   const product = {
     id: parseInt(id || "1"),
     name: "Premium Blue Eyeglasses",
@@ -42,7 +42,6 @@ const TryOn = () => {
         videoRef.current.srcObject = mediaStream;
       }
       setCameraActive(true);
-      // Simulate face detection after a moment
       setTimeout(() => setFaceDetected(true), 1000);
       toast.success("Camera activated");
     } catch (error) {
@@ -90,188 +89,141 @@ const TryOn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navigation />
 
       <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button asChild variant="ghost">
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <Button variant="glass" asChild className="mb-4">
             <Link to={`/product/${id}`}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Product
             </Link>
           </Button>
-          <div className="flex items-center gap-2">
-            {faceDetected ? (
-              <div className="flex items-center gap-2 bg-green-500/10 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
-                <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse" />
-                Face Detected
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 bg-red-500/10 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
-                <div className="w-2 h-2 bg-red-600 rounded-full" />
-                No Face Detected
-              </div>
-            )}
-          </div>
-        </div>
+        </motion.div>
 
-        {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Camera Feed - Takes up 2 columns */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="relative bg-black rounded-2xl overflow-hidden aspect-video">
-              {/* Video Feed */}
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-              />
-              
-              {/* Overlay for glasses - simplified placeholder */}
-              {faceDetected && (
-                <div 
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  style={{ opacity: transparency[0] / 100 }}
-                >
-                  <img
-                    src={product.image}
-                    alt="Virtual Try-On"
-                    className="max-w-[40%] h-auto"
-                    style={{ transform: `scale(${scale[0] / 100})` }}
-                  />
-                </div>
-              )}
-
-              {/* Camera Controls */}
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-3">
-                <Button
-                  variant="camera"
-                  size="icon"
-                  onClick={flipCamera}
-                  className="w-12 h-12"
-                >
-                  <FlipHorizontal className="w-5 h-5" />
-                </Button>
-                <Button
-                  variant="camera"
-                  size="icon"
-                  onClick={captureScreenshot}
-                  className="w-16 h-16"
-                >
-                  <Camera className="w-6 h-6" />
-                </Button>
-                <Button
-                  variant="camera"
-                  size="icon"
-                  onClick={() => setShowSettings(!showSettings)}
-                  className="w-12 h-12"
-                >
-                  <Settings className="w-5 h-5" />
-                </Button>
-              </div>
-
-              {/* Helper Text */}
-              {!faceDetected && cameraActive && (
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <div className="bg-background/90 backdrop-blur-sm rounded-lg p-6">
-                    <p className="text-lg font-medium mb-2">Position your face in the frame</p>
-                    <p className="text-sm text-muted-foreground">
-                      Make sure your face is well-lit and clearly visible
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Tip */}
-            <div className="bg-accent/50 rounded-lg p-4 text-sm">
-              <span className="font-medium">💡 Tip:</span> Adjust the lighting in your room for best results. 
-              Keep your face clearly visible to the camera.
-            </div>
-
-            {/* Hidden canvas for screenshots */}
-            <canvas ref={canvasRef} className="hidden" />
-          </div>
-
-          {/* Control Panel */}
-          <div className="space-y-6">
-            {/* Product Info */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="flex gap-4 mb-4">
-                <div className="w-20 h-20 bg-muted rounded-lg p-2">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold mb-1 line-clamp-2">{product.name}</h3>
-                  <p className="text-xl font-bold text-primary">${product.price}</p>
-                </div>
-              </div>
-
-              {/* Adjustments */}
-              {showSettings && (
-                <div className="space-y-6 pt-6 border-t border-border animate-fade-in">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Size/Scale: {scale[0]}%
-                    </label>
-                    <Slider
-                      value={scale}
-                      onValueChange={setScale}
-                      min={80}
-                      max={120}
-                      step={1}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Transparency: {transparency[0]}%
-                    </label>
-                    <Slider
-                      value={transparency}
-                      onValueChange={setTransparency}
-                      min={50}
-                      max={100}
-                      step={1}
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setScale([100]);
-                      setTransparency([100]);
-                      toast.success("Settings reset");
-                    }}
+          <motion.div 
+            className="lg:col-span-2"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <div className="relative glass-strong rounded-3xl overflow-hidden shadow-2xl">
+              <div className="aspect-video bg-gradient-to-br from-muted to-background relative">
+                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                
+                {faceDetected && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    style={{ opacity: transparency[0] / 100 }}
                   >
-                    Reset to Default
-                  </Button>
+                    <img
+                      src={product.image}
+                      alt="Virtual Try-On"
+                      className="max-w-[40%] h-auto"
+                      style={{ transform: `scale(${scale[0] / 100})` }}
+                    />
+                  </div>
+                )}
+
+                <motion.div 
+                  className="absolute top-4 left-4 flex items-center gap-2 glass-strong px-4 py-2 rounded-full text-sm shadow-lg"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <motion.div 
+                    className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-green-500' : 'bg-red-500'}`}
+                    animate={faceDetected ? { scale: [1, 1.2, 1] } : {}}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  />
+                  <span className="font-medium">{faceDetected ? 'Face Detected' : 'No Face'}</span>
+                </motion.div>
+
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button variant="glass" size="icon" className="w-12 h-12 rounded-full shadow-lg" onClick={flipCamera}>
+                      <FlipHorizontal className="w-5 h-5" />
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button variant="accent" size="icon" className="w-16 h-16 rounded-full shadow-xl" onClick={captureScreenshot}>
+                      <Camera className="w-6 h-6" />
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button variant="glass" size="icon" className="w-12 h-12 rounded-full shadow-lg" onClick={() => setShowSettings(!showSettings)}>
+                      <Settings className="w-5 h-5" />
+                    </Button>
+                  </motion.div>
                 </div>
-              )}
+              </div>
+            </div>
+            <canvas ref={canvasRef} className="hidden" />
+          </motion.div>
+
+          <motion.div 
+            className="space-y-6"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="glass-strong rounded-2xl p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <motion.div className="glass rounded-xl p-2" whileHover={{ scale: 1.05 }}>
+                  <img src={product.image} alt="Product" className="w-20 h-20 object-contain" />
+                </motion.div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                  <p className="text-2xl font-bold gradient-text">${product.price}</p>
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {showSettings && (
+                  <motion.div 
+                    className="space-y-6 pt-6 border-t border-border/20"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <div>
+                      <label className="text-sm font-medium mb-3 block flex items-center gap-2">
+                        <Maximize2 className="w-4 h-4 text-accent" />
+                        Size: {scale[0]}%
+                      </label>
+                      <Slider value={scale} onValueChange={setScale} min={80} max={120} step={1} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-3 block">Transparency: {transparency[0]}%</label>
+                      <Slider value={transparency} onValueChange={setTransparency} min={50} max={100} step={1} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
-              <Button size="lg" className="w-full">
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Buy Now
-              </Button>
-              <Button size="lg" variant="secondary" className="w-full">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share Try-On
-              </Button>
-              <Button size="lg" variant="outline" className="w-full">
-                <Heart className="w-4 h-4 mr-2" />
-                Add to Wishlist
-              </Button>
-              <Button asChild variant="ghost" className="w-full">
-                <Link to={`/product/${id}`}>Back to Details</Link>
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button variant="accent" className="w-full" size="lg">
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Buy Now
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button variant="glass" className="w-full" size="lg">
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share
+                </Button>
+              </motion.div>
             </div>
-          </div>
+
+            <motion.div className="glass-strong rounded-2xl p-5">
+              <p className="text-sm">
+                <span className="text-2xl mr-2">💡</span>
+                <strong className="text-accent">Tip:</strong>{" "}
+                <span className="text-muted-foreground">Adjust lighting for best results.</span>
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>
