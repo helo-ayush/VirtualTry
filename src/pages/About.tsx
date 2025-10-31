@@ -17,7 +17,7 @@ const About = () => {
       icon: Eye,
       title: "Our Vision",
       description:
-        "We envision a future where virtual try-on is the standard for e-commerce, making shopping more accessible, personal, and enjoyable for everyone.",
+        "We envision a future where Meta Drip is the standard for e-commerce, making shopping more accessible, personal, and enjoyable for everyone.",
     },
     {
       icon: Cpu,
@@ -46,7 +46,7 @@ const About = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              About <span className="gradient-text">VirtualTryOn</span>
+              About <span className="gradient-text">Meta Drip</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-6">
               We're revolutionizing the way you shop for accessories online.
@@ -76,7 +76,7 @@ const About = () => {
                   Our Story
                 </h2>
                 <p className="text-muted-foreground mb-4">
-                  VirtualTryOn was born from a simple problem: shopping for
+                  Meta Drip was born from a simple problem: shopping for
                   accessories online is a gamble. We wanted to take the guesswork
                   out of the equation.
                 </p>
