@@ -107,7 +107,7 @@ const Landing = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                Experience our innovative Virtual Try-On technology. Browse our collection of eyeglasses, 
+                Experience our innovative Meta Drip technology. Browse our collection of eyeglasses, 
                 hats, and more. See how they look on you in real-time with AI-powered facial landmark detection.
               </motion.p>
               
