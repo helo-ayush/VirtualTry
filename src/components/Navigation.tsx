@@ -41,7 +41,7 @@ const Navigation = () => {
             >
               <Glasses className="w-7 h-7" />
             </motion.div>
-            <span className="gradient-text">VirtualTry</span>
+            <span className="gradient-text">Meta Drip</span>
           </Link>
 
           {/* Desktop Menu */}
